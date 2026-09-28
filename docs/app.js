@@ -15,11 +15,10 @@ const stepButtons = [...document.querySelectorAll(".step")];
 const explainCards = [...document.querySelectorAll(".explain-card")];
 const diagramJumpButtons = [...document.querySelectorAll(".diagram-jump")];
 const gateElements = [...document.querySelectorAll(".flow-gate")];
+const pipelineCard = document.querySelector(".pipeline-card");
 const flowArea = document.getElementById("flowArea");
 const flowCanvas = document.getElementById("flowCanvas");
 const context = flowCanvas.getContext("2d", { alpha: true });
-const playButton = document.getElementById("playButton");
-const nextButton = document.getElementById("nextButton");
 const readout = document.querySelector(".flow-readout");
 const detail = document.querySelector(".stage-detail");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -28,16 +27,20 @@ let activeStage = 0;
 let visualProgress = 0;
 let fromProgress = 0;
 let targetProgress = 0;
+let displayedCount = 189212;
+let fromCount = 189212;
 let transitionStart = 0;
 let animationClock = 0;
 let lastFrame = 0;
 let frameId = 0;
 let autoTimer = 0;
-let isPlaying = false;
+let isPlaying = !reducedMotion.matches && !document.hidden;
 let width = 0;
 let height = 0;
 
-const palette = ["#61baff", "#72e987", "#b38cff", "#ff8796"];
+const stageColors = ["#61baff", "#b38cff", "#6bd9ed", "#ffc979", "#80ee9c"];
+const stageCounts = [189212, 9000, 1500, 750, 50];
+const countFormatter = new Intl.NumberFormat("ru-RU");
 const survival = [1, .72, .47, .29, .13];
 
 function random(seed) {
@@ -46,11 +49,19 @@ function random(seed) {
 }
 
 function ease(t) {
-  return 1 - Math.pow(1 - t, 3);
+  return t * t * (3 - 2 * t);
 }
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
+}
+
+function colorAt(progress) {
+  const left = Math.min(3, Math.max(0, Math.floor(progress)));
+  const fraction = Math.min(1, Math.max(0, progress - left));
+  const first = stageColors[left].match(/[\da-f]{2}/gi).map(part => parseInt(part, 16));
+  const second = stageColors[left + 1].match(/[\da-f]{2}/gi).map(part => parseInt(part, 16));
+  return first.map((value, channel) => Math.round(lerp(value, second[channel], fraction)));
 }
 
 /* Пять сечений сужающегося потока совпадают с пятью этапами над схемой. */
@@ -90,19 +101,18 @@ function drawScene(time, progress) {
   context.clearRect(0, 0, width, height);
   const reach = Math.max(.025, progress / 4);
   const gradient = context.createLinearGradient(width * .1, 0, width * .91, 0);
-  gradient.addColorStop(0, "#57aefb");
-  gradient.addColorStop(.49, "#a884f4");
-  gradient.addColorStop(1, "#6fe783");
+  stageColors.forEach((color, index) => gradient.addColorStop(index / 4, color));
 
   ribbon(1, .055, gradient);
   ribbon(reach, .095, gradient);
 
   /* Мягкая световая волна идёт вместе с выбранным этапом. */
   const head = geometry(reach);
+  const [red, green, blue] = colorAt(progress);
   const halo = context.createRadialGradient(head.x, head.center, 4, head.x, head.center, Math.min(170, width * .16));
-  halo.addColorStop(0, "#66c7ff3d");
-  halo.addColorStop(.5, "#6f9ae416");
-  halo.addColorStop(1, "#6f9ae400");
+  halo.addColorStop(0, `rgba(${red}, ${green}, ${blue}, .27)`);
+  halo.addColorStop(.5, `rgba(${red}, ${green}, ${blue}, .1)`);
+  halo.addColorStop(1, `rgba(${red}, ${green}, ${blue}, 0)`);
   context.fillStyle = halo;
   context.fillRect(0, 0, width, height);
 
@@ -125,19 +135,23 @@ function drawScene(time, progress) {
   context.globalAlpha = 1;
 
   /* Часть точек гаснет у каждого «сита», оставшиеся продолжают движение. */
-  for (let i = 0; i < 175; i++) {
+  const activeGate = geometry(activeStage / 4);
+  for (let i = 0; i < 310; i++) {
     const phase = random(i + 17);
-    const speed = .000035 + random(i + 217) * .000045;
-    const t = ((phase + time * speed) % 1) * reach;
+    const speed = .000022 + random(i + 217) * .000027;
+    const t = (phase + time * speed) % 1;
+    if (t > reach) continue;
     const gateIndex = Math.min(4, Math.floor(t * 4 + .015));
     if (random(i + 779) > survival[gateIndex]) continue;
     const point = geometry(t);
     const lane = random(i + 407) * 2 - 1;
     const drift = Math.sin(time * .0015 + i) * (1 - t) * 4;
     const y = point.center + lane * point.spread * .89 + drift;
+    if (Math.abs(point.x - activeGate.x) < 12 && Math.abs(y - activeGate.center) < 28) continue;
     const size = 1.1 + random(i + 997) * 2.1;
-    const alpha = (.37 + random(i + 1307) * .55) * Math.min(1, (reach - t) * 22 + .25);
-    context.fillStyle = palette[i % palette.length];
+    const edgeFade = Math.min(1, t * 45, (reach - t) * 35 + .18);
+    const alpha = (.37 + random(i + 1307) * .55) * edgeFade;
+    context.fillStyle = stageColors[gateIndex];
     context.globalAlpha = alpha;
     context.beginPath();
     context.arc(point.x, y, size, 0, Math.PI * 2);
@@ -150,15 +164,6 @@ function drawScene(time, progress) {
     }
   }
   context.globalAlpha = 1;
-
-  const beam = geometry(reach);
-  context.beginPath();
-  context.arc(beam.x, beam.center, 4.5, 0, Math.PI * 2);
-  context.fillStyle = "#a4f8b0";
-  context.shadowColor = "#8cffb0";
-  context.shadowBlur = 22;
-  context.fill();
-  context.shadowBlur = 0;
 }
 
 function resizeCanvas() {
@@ -180,8 +185,11 @@ function onFrame(timestamp) {
   frameId = 0;
   if (lastFrame) animationClock += Math.min(timestamp - lastFrame, 50) * (isPlaying ? 1 : .35);
   lastFrame = timestamp;
-  const elapsed = Math.min(1, (timestamp - transitionStart) / 1450);
+  const elapsed = Math.min(1, (timestamp - transitionStart) / 2400);
   visualProgress = lerp(fromProgress, targetProgress, ease(elapsed));
+  displayedCount = lerp(fromCount, stageCounts[activeStage], ease(elapsed));
+  document.getElementById("coreCount").textContent =
+    `${activeStage === 1 && elapsed === 1 ? "≈ " : ""}${countFormatter.format(Math.round(displayedCount))}`;
   drawScene(animationClock, visualProgress);
   if (isPlaying || elapsed < 1) queueFrame();
   else lastFrame = 0;
@@ -191,10 +199,11 @@ function updateStage(index) {
   activeStage = index;
   const data = stages[index];
   fromProgress = visualProgress;
+  fromCount = displayedCount;
   targetProgress = index;
   transitionStart = performance.now();
   flowArea.dataset.stage = String(index);
-  document.getElementById("coreCount").textContent = data.count;
+  pipelineCard.style.setProperty("--active-color", stageColors[index]);
   document.getElementById("coreLabel").textContent = data.label;
   document.getElementById("detailNumber").textContent = `ЭТАП ${String(index + 1).padStart(2, "0")} / 05`;
   document.getElementById("detailTitle").textContent = data.title;
@@ -224,49 +233,67 @@ function updateStage(index) {
   detail.classList.add("is-changing");
   if (reducedMotion.matches) {
     visualProgress = index;
+    displayedCount = stageCounts[index];
+    document.getElementById("coreCount").textContent = data.count;
     drawScene(animationClock, visualProgress);
   } else queueFrame();
 }
 
 function stopAutoPlay() {
-  if (autoTimer) clearInterval(autoTimer);
+  if (autoTimer) clearTimeout(autoTimer);
   autoTimer = 0;
-  isPlaying = false;
-  playButton.innerHTML = "▶ <span>Пуск</span>";
-  playButton.setAttribute("aria-label", "Запустить анимацию");
-  playButton.setAttribute("aria-pressed", "false");
 }
 
-function startAutoPlay() {
-  if (reducedMotion.matches) return;
-  if (autoTimer) clearInterval(autoTimer);
-  isPlaying = true;
-  autoTimer = setInterval(() => updateStage((activeStage + 1) % stages.length), 4300);
-  playButton.innerHTML = "Ⅱ <span>Пауза</span>";
-  playButton.setAttribute("aria-label", "Приостановить анимацию");
-  playButton.setAttribute("aria-pressed", "true");
-  queueFrame();
+function scheduleAutoPlay(delay = 5600) {
+  stopAutoPlay();
+  if (reducedMotion.matches || document.hidden || activeStage === stages.length - 1) return;
+  autoTimer = setTimeout(() => {
+    updateStage(activeStage + 1);
+    scheduleAutoPlay();
+  }, delay);
 }
 
 stepButtons.forEach(button => button.addEventListener("click", () => {
-  stopAutoPlay();
   updateStage(Number(button.dataset.stage));
+  scheduleAutoPlay(9500);
 }));
 diagramJumpButtons.forEach(button => button.addEventListener("click", () => {
-  stopAutoPlay();
   updateStage(Number(button.dataset.jumpStage));
+  scheduleAutoPlay(9500);
   document.getElementById("pipeline").scrollIntoView({
     behavior: reducedMotion.matches ? "auto" : "smooth",
     block: "start"
   });
 }));
-nextButton.addEventListener("click", () => { stopAutoPlay(); updateStage((activeStage + 1) % stages.length); });
-playButton.addEventListener("click", () => isPlaying ? stopAutoPlay() : startAutoPlay());
 reducedMotion.addEventListener("change", event => {
-  if (event.matches) { stopAutoPlay(); visualProgress = activeStage; drawScene(animationClock, visualProgress); }
+  if (event.matches) {
+    stopAutoPlay();
+    isPlaying = false;
+    visualProgress = activeStage;
+    displayedCount = stageCounts[activeStage];
+    document.getElementById("coreCount").textContent = stages[activeStage].count;
+    drawScene(animationClock, visualProgress);
+  } else {
+    isPlaying = !document.hidden;
+    scheduleAutoPlay();
+    if (isPlaying) queueFrame();
+  }
 });
-document.addEventListener("visibilitychange", () => { if (document.hidden) stopAutoPlay(); });
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    stopAutoPlay();
+    isPlaying = false;
+  } else if (!reducedMotion.matches) {
+    isPlaying = true;
+    lastFrame = 0;
+    transitionStart = performance.now() - 2400;
+    fromProgress = visualProgress;
+    fromCount = displayedCount;
+    scheduleAutoPlay();
+    queueFrame();
+  }
+});
 new ResizeObserver(resizeCanvas).observe(flowCanvas);
 
 updateStage(0);
-if (!reducedMotion.matches) startAutoPlay();
+if (!reducedMotion.matches) scheduleAutoPlay();
