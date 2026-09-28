@@ -8,9 +8,13 @@
   Лексический и семантический поиск → два этапа CatBoost → LambdaMART + BGE reranker
 </p>
 
+<h2 align="center">
+  <a href="https://zaplatinartur.github.io/Avito_DS_Testovoe/">Посмотреть интерактивный отчёт ↗</a>
+</h2>
+<p align="center"><strong>Обязательно посмотрите,я старался)</strong></p>
+
 <p align="center">
-  <a href="https://zaplatinartur.github.io/Avito_DS_Testovoe/"><strong>Посмотреть интерактивный каскад</strong></a>
-  · <a href="avito_reproduce_0850967_kaggle.ipynb"><strong>Открыть ноутбук</strong></a>
+  <a href="avito_reproduce_0850967_kaggle.ipynb"><strong>Открыть ноутбук</strong></a>
   · <a href="#идея-каскада">Каскад</a>
   · <a href="#проверка-качества">Результаты</a>
   · <a href="#воспроизведение">Запуск</a>
