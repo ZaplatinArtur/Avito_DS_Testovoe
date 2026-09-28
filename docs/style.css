@@ -212,31 +212,30 @@ code{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;color:#d6ecff}
 @media(max-width:620px){.details-link{font-size:11px;margin-top:22px}.explain-section{padding-block:70px 38px}.explain-card{padding:20px;gap:19px}.explain-copy h3{font-size:1.55rem}.explain-simple{font-size:14px}.explain-detail{font-size:12px}.scheme{padding:13px;gap:12px}.scheme-flow{grid-template-columns:minmax(60px,.8fr) 12px minmax(87px,1.2fr) 12px minmax(60px,.8fr);gap:3px;min-height:190px}.scheme-node{min-height:70px;padding:7px 3px}.scheme-node b{font-size:11px}.scheme-node small{font-size:8px}.scheme-stack{gap:5px}.scheme-stack .scheme-node{min-height:44px}.scheme-stack .scheme-node b{font-size:10px}.scheme-stack .scheme-node small{font-size:8px}.scheme-arrow{font-size:17px}.scheme-kicker,.scheme-caption{font-size:9px}.scheme-model{font-size:8px}.explain-outcome strong{font-size:12px}.results-section{padding-top:62px}}
 @media(prefers-reduced-motion:reduce){.explain-card,.details-link,.diagram-jump{transition:none!important}}
 
-/* Короткая преамбула перед анимацией: цель, принцип полноты и три роли этапов. */
-.approach-section{position:relative;padding-bottom:36px}
-.approach-heading{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.86fr);align-items:end;gap:48px;margin-bottom:24px}
-.approach-heading h2{max-width:670px}
-.approach-heading p{max-width:480px;margin:0 0 4px;color:#b8c8da;font-size:15px;line-height:1.7}
-.approach-panel{overflow:hidden;border:1px solid #496381;border-radius:23px;background:linear-gradient(145deg,#172640,#121d31 68%);box-shadow:0 24px 65px #0003}
-.approach-principle{display:flex;align-items:center;gap:21px;padding:25px 29px;border-bottom:1px solid #ffffff1a;background:radial-gradient(ellipse at 5% 0,#4595d625,transparent 55%)}
-.approach-mark{flex:none;display:grid;place-items:center;width:39px;height:39px;border:1px solid #71b8ec82;border-radius:12px;background:#2c527359;color:#87d8ff;font-size:25px;line-height:1}
-.approach-principle p{flex:1;margin:0;color:#b4c8df;font-size:13px;line-height:1.65}
-.approach-principle strong{color:#f3f8ff;font-weight:750}
-.approach-example{flex:none;display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid #7998b45e;border-radius:99px;background:#0e1b2e;color:#d7ebff;font-size:12px;font-weight:750;white-space:nowrap}
-.approach-example i{color:#7fe99d;font-size:17px;font-style:normal}
-.approach-path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:27px 29px 25px}
-.approach-path>div{--path-color:#61baff;position:relative;min-width:0;padding:6px 28px 4px;border-right:1px solid #49617c78}
-.approach-path>div:first-child{padding-left:0}
-.approach-path>div:last-child{padding-right:0;border-right:0}
+/* Преамбула — отдельная светлая полоса, крупный текст и три самостоятельные карточки. */
+.approach-section{position:relative;padding:78px 0 82px;border-block:1px solid #6485ad5c;background:radial-gradient(ellipse 68% 80% at 50% 50%,#23517b33,transparent 85%),linear-gradient(145deg,#14243d,#13243a 58%,#101d31)}
+.approach-heading{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.84fr);align-items:end;gap:56px;margin-bottom:34px}
+.approach-heading h2{max-width:730px;font-size:clamp(2.8rem,4.4vw,4.3rem)}
+.approach-heading p{max-width:520px;margin:0 0 4px;color:#d0dfef;font-size:18px;line-height:1.65}
+.approach-panel{overflow:hidden;border:1px solid #7399bc;border-radius:27px;background:linear-gradient(145deg,#1c304c,#172840 68%);box-shadow:0 30px 85px #0005,0 0 0 1px #c6e8ff0d inset}
+.approach-principle{display:flex;align-items:center;gap:25px;padding:32px 35px;border-bottom:1px solid #9cc4e43d;background:radial-gradient(ellipse at 5% 0,#4b95ce35,transparent 60%)}
+.approach-mark{flex:none;display:grid;place-items:center;width:54px;height:54px;border:1px solid #89cfff9c;border-radius:15px;background:#35638a7a;color:#b4e8ff;font-size:29px;line-height:1}
+.approach-principle p{flex:1;margin:0;color:#d0e1f1;font-size:15px;line-height:1.65}
+.approach-principle strong{display:block;margin-bottom:4px;color:#fff;font-size:19px;line-height:1.35;font-weight:780}
+.approach-example{flex:none;display:flex;align-items:center;gap:10px;padding:13px 16px;border:1px solid #91b5d281;border-radius:99px;background:#10243c;color:#e7f5ff;font-size:14px;font-weight:750;white-space:nowrap}
+.approach-example i{color:#86efa4;font-size:20px;font-style:normal}
+.approach-path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:24px 28px}
+.approach-path>div{--path-color:#61baff;display:flex;align-items:flex-start;flex-direction:column;min-width:0;min-height:221px;padding:24px;border:1px solid color-mix(in srgb,var(--path-color) 42%,#496078);border-radius:17px;background:linear-gradient(155deg,color-mix(in srgb,var(--path-color) 12%,#1a304b),#172940);box-shadow:0 14px 28px #0713232e}
 .approach-path>div:nth-child(2){--path-color:#ffc979}
 .approach-path>div:nth-child(3){--path-color:#80ee9c}
-.approach-path-number{display:inline-grid;place-items:center;width:27px;height:27px;margin-right:9px;border:1px solid color-mix(in srgb,var(--path-color) 55%,transparent);border-radius:8px;background:color-mix(in srgb,var(--path-color) 13%,transparent);color:var(--path-color);font-size:10px;font-weight:850;letter-spacing:.07em}
-.approach-path strong{font-size:18px;letter-spacing:-.03em}
-.approach-path p{min-height:57px;margin:13px 0 9px;color:#b3c2d4;font-size:12px;line-height:1.6}
-.approach-path small{color:var(--path-color);font-size:11px;font-weight:800;letter-spacing:.02em}
-.approach-metric{margin:0;padding:14px 29px 17px;border-top:1px solid #ffffff16;color:#9fb3ca;font-size:11px;line-height:1.6}
-.approach-metric strong{color:#d7e9fb}
-.approach-metric a{color:#8fd9ff;text-decoration:underline;text-underline-offset:3px}
+.approach-path-number{display:inline-grid;place-items:center;width:34px;height:34px;margin-bottom:12px;border:1px solid color-mix(in srgb,var(--path-color) 62%,transparent);border-radius:10px;background:color-mix(in srgb,var(--path-color) 16%,transparent);color:var(--path-color);font-size:12px;font-weight:850;letter-spacing:.07em}
+.approach-path strong{font-size:23px;letter-spacing:-.035em;line-height:1.2}
+.approach-path p{margin:12px 0 16px;color:#d3e0ed;font-size:15px;line-height:1.55}
+.approach-path small{margin-top:auto;color:var(--path-color);font-size:14px;font-weight:800;letter-spacing:.01em}
+.approach-metric{margin:0;padding:21px 30px 24px;border-top:1px solid #9cc4e432;color:#c2d4e7;font-size:14px;line-height:1.55}
+.approach-metric strong{color:#fff}
+.approach-metric a{color:#a1e3ff;text-decoration:underline;text-underline-offset:3px}
 .approach-metric a:hover{color:white}
-@media(max-width:900px){.approach-section{padding-bottom:32px}.approach-heading{grid-template-columns:1fr;gap:16px}.approach-principle{flex-wrap:wrap}.approach-principle p{flex-basis:calc(100% - 65px)}.approach-example{margin-left:60px}.approach-path>div{padding-inline:17px}}
-@media(max-width:620px){.approach-section{padding-bottom:24px}.approach-heading p{font-size:13px}.approach-panel{border-radius:19px}.approach-principle{gap:12px;padding:20px}.approach-mark{width:31px;height:31px;font-size:19px}.approach-principle p{flex-basis:calc(100% - 48px);font-size:12px}.approach-example{margin-left:0;font-size:11px;gap:6px}.approach-path{grid-template-columns:1fr;padding:4px 20px}.approach-path>div,.approach-path>div:first-child,.approach-path>div:last-child{padding:18px 0;border-right:0;border-bottom:1px solid #49617c78}.approach-path>div:last-child{border-bottom:0}.approach-path p{min-height:0;margin:7px 0}.approach-metric{padding:15px 20px}}
+@media(max-width:900px){.approach-section{padding:62px 0 68px}.approach-heading{grid-template-columns:1fr;gap:18px}.approach-heading p{max-width:680px}.approach-principle{flex-wrap:wrap}.approach-principle p{flex-basis:calc(100% - 85px)}.approach-example{margin-left:79px}.approach-path>div{padding:20px}}
+@media(max-width:760px){.approach-path{grid-template-columns:1fr}.approach-path>div{min-height:0}.approach-path p{max-width:520px}.approach-path small{margin-top:0}}
+@media(max-width:620px){.approach-section{padding:52px 0 56px}.approach-heading{margin-bottom:25px}.approach-heading h2{font-size:clamp(2.35rem,8vw,3rem)}.approach-heading p{font-size:16px}.approach-panel{border-radius:20px}.approach-principle{gap:14px;padding:21px}.approach-mark{width:39px;height:39px;font-size:23px}.approach-principle p{flex-basis:calc(100% - 55px);font-size:14px}.approach-principle strong{font-size:17px}.approach-example{margin-left:0;font-size:12px;padding:10px 12px;gap:7px}.approach-path{gap:11px;padding:16px}.approach-path>div{padding:19px}.approach-path strong{font-size:21px}.approach-path p{font-size:14px;margin:9px 0 13px}.approach-path small{font-size:13px}.approach-metric{padding:18px 21px 21px;font-size:13px}}
