@@ -90,11 +90,131 @@
             <div class="detail-meta"><span>Методы этапа</span><strong id="detailMethods">Индекс объявлений</strong><span id="detailRecallLabel">Назначение</span><strong id="detailRecall">Полный охват корпуса</strong></div>
           </div>
         </div>
+        <a class="details-link" href="#stages">Разобрать каждый этап по шагам <span aria-hidden="true">↓</span></a>
       </div>
     </section>
 
+    <section id="stages" class="explain-section shell" aria-labelledby="stages-title">
+      <div class="section-heading">
+        <div><span class="section-kicker">02 / Что происходит внутри</span><h2 id="stages-title">От каталога до ответа</h2></div>
+        <p>Схемы ниже показывают логику решения. Размеры блоков и стрелки условные; точные лимиты и методы приведены рядом.</p>
+      </div>
+      <div class="explain-list">
+        <article class="explain-card tone-blue is-current" data-explain-stage="0">
+          <div class="explain-copy">
+            <span class="explain-index">01 <span>→</span> КОРПУС</span>
+            <h3>Сначала есть большой каталог</h3>
+            <p class="explain-simple">Поиск видит почти 190 тысяч объявлений. У каждого есть текст и признаки: где исполнитель работает, сколько стоит услуга и что о нём известно.</p>
+            <p class="explain-detail">Эти поля подготавливаются к поиску. Проверить дорогой нейросетью каждое объявление для каждого запроса было бы слишком медленно.</p>
+            <div class="explain-outcome"><span>На входе</span><strong>189 212 объявлений</strong></div>
+            <button class="diagram-jump" type="button" data-jump-stage="0">Показать в анимации <span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="scheme" aria-label="Схема корпуса: объявления с текстом и признаками становятся доступными поиску">
+            <span class="scheme-kicker">СХЕМА ЭТАПА / ДАННЫЕ</span>
+            <div class="scheme-flow">
+              <div class="scheme-node scheme-start"><b>189 тыс.</b><small>объявлений</small></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-stack"><div class="scheme-node"><b>Текст</b><small>заголовок · описание</small></div><div class="scheme-node"><b>Параметры</b><small>категория · локация</small></div><div class="scheme-node"><b>Качество</b><small>цена · рейтинг · отзывы</small></div></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-node scheme-end"><b>Поиск</b><small>по всему корпусу</small></div>
+            </div>
+            <span class="scheme-caption">Из полей объявления строятся сигналы для следующих этапов.</span>
+          </div>
+        </article>
+
+        <article class="explain-card tone-purple" data-explain-stage="1">
+          <div class="explain-copy">
+            <span class="explain-index">02 <span>→</span> ШИРОКИЙ ПОИСК</span>
+            <h3>Ищем сразу несколькими способами</h3>
+            <p class="explain-simple">Один способ ловит точные слова, другой — смысл, третий — объявления рядом. Объединяем находки: сейчас важнее никого подходящего не потерять.</p>
+            <p class="explain-detail">Так «барбер» может найти и объявление с формулировкой «мужская стрижка». Пул плавает по размеру: около 9 тысяч — ориентир, а не жёсткий порог.</p>
+            <div class="explain-outcome"><span>После объединения</span><strong>≈ 9 000 · Recall 0,996*</strong></div>
+            <button class="diagram-jump" type="button" data-jump-stage="1">Показать в анимации <span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="scheme" aria-label="Схема широкого поиска: запрос направляется в лексический, географический и семантические источники, результаты объединяются">
+            <span class="scheme-kicker">СХЕМА ЭТАПА / ВЫСОКАЯ ПОЛНОТА</span>
+            <div class="scheme-flow">
+              <div class="scheme-node scheme-start"><b>Запрос</b><small>слова + фильтры</small></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-stack"><div class="scheme-node"><b>Точные слова</b><small>FTS5 / BM25</small></div><div class="scheme-node"><b>Рядом</b><small>география</small></div><div class="scheme-node"><b>Похожий смысл</b><small>LSA · linear · BGE-M3</small></div></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-node scheme-end"><b>Общий пул</b><small>≈ 9 000</small></div>
+            </div>
+            <span class="scheme-caption">Источники дополняют друг друга: объявление достаточно найти одному из них.</span>
+          </div>
+        </article>
+
+        <article class="explain-card tone-cyan" data-explain-stage="2">
+          <div class="explain-copy">
+            <span class="explain-index">03 <span>→</span> ПЕРВЫЙ ОТБОР</span>
+            <h3>Быстро оцениваем каждого кандидата</h3>
+            <p class="explain-simple">Модель смотрит, насколько объявление похоже на запрос, откуда оно найдено и подходит ли по месту и другим условиям.</p>
+            <p class="explain-detail">CatBoost L1 соединяет ранги BM25 и векторного поиска с признаками локации, категории, цены и отзывов. Он оставляет большой запас для следующего шага.</p>
+            <div class="explain-outcome"><span>Остаётся</span><strong>1 500 · Recall 0,994*</strong></div>
+            <button class="diagram-jump" type="button" data-jump-stage="2">Показать в анимации <span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="scheme" aria-label="Схема L1: широкий пул и быстрые признаки поступают в CatBoost, который оставляет 1500 кандидатов">
+            <span class="scheme-kicker">СХЕМА ЭТАПА / БЫСТРАЯ ОЦЕНКА</span>
+            <div class="scheme-flow">
+              <div class="scheme-node scheme-start"><b>≈ 9 000</b><small>кандидатов</small></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-stack"><div class="scheme-node"><b>Текст</b><small>BM25 · совпадения</small></div><div class="scheme-node"><b>Смысл</b><small>векторные оценки</small></div><div class="scheme-node"><b>Условия</b><small>гео · цена · категория</small></div><div class="scheme-model">CatBoost L1</div></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-node scheme-end"><b>1 500</b><small>кандидатов</small></div>
+            </div>
+            <span class="scheme-caption">Модель сжимает пул, сохраняя почти все выбранные объявления.</span>
+          </div>
+        </article>
+
+        <article class="explain-card tone-teal" data-explain-stage="3">
+          <div class="explain-copy">
+            <span class="explain-index">04 <span>→</span> ВТОРОЙ ОТБОР</span>
+            <h3>Читаем объявление внимательнее</h3>
+            <p class="explain-simple">Теперь можно потратить больше времени на каждую пару: проверить не только заголовок, но и параметры, описание и фильтры.</p>
+            <p class="explain-detail">CatBoost L2 использует дополнительные признаки точной фразы и отдельных слов в разных частях объявления. Пул сужается до 750.</p>
+            <div class="explain-outcome"><span>Остаётся</span><strong>750 · Recall 0,986*</strong></div>
+            <button class="diagram-jump" type="button" data-jump-stage="3">Показать в анимации <span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="scheme" aria-label="Схема L2: проверка заголовка, описания, параметров и фильтров помогает CatBoost отобрать 750 объявлений">
+            <span class="scheme-kicker">СХЕМА ЭТАПА / БОЛЕЕ ТОЧНОЕ ЧТЕНИЕ</span>
+            <div class="scheme-flow">
+              <div class="scheme-node scheme-start"><b>1 500</b><small>кандидатов</small></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-stack"><div class="scheme-node"><b>Заголовок</b><small>слова · фразы</small></div><div class="scheme-node"><b>Описание</b><small>детали услуги</small></div><div class="scheme-node"><b>Фильтры</b><small>совпадение условий</small></div><div class="scheme-model">CatBoost L2</div></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-node scheme-end"><b>750</b><small>кандидатов</small></div>
+            </div>
+            <span class="scheme-caption">Объявление может описывать нужную услугу не в заголовке.</span>
+          </div>
+        </article>
+
+        <article class="explain-card tone-green" data-explain-stage="4">
+          <div class="explain-copy">
+            <span class="explain-index">05 <span>→</span> ФИНАЛ</span>
+            <h3>Два взгляда на оставшиеся 750</h3>
+            <p class="explain-simple">Одна модель оценивает все признаки и место объявления среди соседей. Другая глубоко сравнивает текст запроса и объявления. Их мнения объединяются.</p>
+            <p class="explain-detail">LambdaMART-topk и дообученный BGE-reranker-v2-m3 дают отдельные ранги. Финальная формула использует веса 0,85 и 0,15; итог — ровно до 50 ID.</p>
+            <div class="explain-outcome"><span>Ответ</span><strong>50 · Recall@50 0,850967**</strong></div>
+            <button class="diagram-jump" type="button" data-jump-stage="4">Показать в анимации <span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="scheme" aria-label="Схема финала: LambdaMART и дообученный BGE оценивают одни и те же 750 объявлений, их ранги объединяются в топ-50">
+            <span class="scheme-kicker">СХЕМА ЭТАПА / ДВА НЕЗАВИСИМЫХ СИГНАЛА</span>
+            <div class="scheme-flow">
+              <div class="scheme-node scheme-start"><b>750</b><small>кандидатов</small></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-stack"><div class="scheme-node"><b>LambdaMART</b><small>признаки + позиции</small></div><div class="scheme-node"><b>BGE reranker</b><small>текст запроса + объявления</small></div><div class="scheme-model">Слияние рангов · 0,85 / 0,15</div></div>
+              <span class="scheme-arrow" aria-hidden="true">→</span>
+              <div class="scheme-node scheme-end"><b>Топ‑50</b><small>item_id</small></div>
+            </div>
+            <span class="scheme-caption">Тяжёлая текстовая модель применяется только в конце каскада.</span>
+          </div>
+        </article>
+      </div>
+      <p class="explain-note">* Локальный Recall измерен на отложенной группе из 500 запросов. ** Recall@50 = 0,850967 получен на другой, скрытой группе; эти оценки нельзя сравнивать прямым вычитанием.</p>
+    </section>
+
     <section id="results" class="results-section shell" aria-labelledby="results-title">
-      <div class="section-heading"><div><span class="section-kicker">02 / Проверка</span><h2 id="results-title">Где теряются кандидаты</h2></div><p>Локальные значения получены на отложенной группе из 500 запросов. Скрытая проверка проводилась на другой группе, поэтому числа нельзя напрямую вычитать друг из друга.</p></div>
+      <div class="section-heading"><div><span class="section-kicker">03 / Проверка</span><h2 id="results-title">Где теряются кандидаты</h2></div><p>Локальные значения получены на отложенной группе из 500 запросов. Скрытая проверка проводилась на другой группе, поэтому числа нельзя напрямую вычитать друг из друга.</p></div>
       <div class="result-grid">
         <article class="result-card"><span class="result-num">01</span><h3>Широкий пул</h3><strong>0,996</strong><span>Recall@pool · локально</span><div class="result-line" style="--fill:99.6%"></div></article>
         <article class="result-card"><span class="result-num">02</span><h3>CatBoost L1</h3><strong>0,994</strong><span>Recall@1500 · локально</span><div class="result-line" style="--fill:99.4%"></div></article>
@@ -103,7 +223,7 @@
       </div>
     </section>
 
-    <section class="closing-section shell"><div><span class="section-kicker">03 / Воспроизведение</span><h2>Весь код открыт.</h2><p>Ноутбук читает три Parquet-файла, обучает модели и создаёт <code>answer.csv</code>. Полный прогон на Kaggle с двумя GPU T4 занимает ориентировочно шесть часов.</p></div><a class="button button-primary" href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe">README и исходный код <span aria-hidden="true">↗</span></a></section>
+    <section class="closing-section shell"><div><span class="section-kicker">04 / Воспроизведение</span><h2>Весь код открыт.</h2><p>Ноутбук читает три Parquet-файла, обучает модели и создаёт <code>answer.csv</code>. Полный прогон на Kaggle с двумя GPU T4 занимает ориентировочно шесть часов.</p></div><a class="button button-primary" href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe">README и исходный код <span aria-hidden="true">↗</span></a></section>
   </main>
   <footer class="site-footer"><div class="shell"><span>Исследовательское решение задачи поиска услуг Авито</span><a href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe">GitHub ↗</a></div></footer>
 </body>

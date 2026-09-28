@@ -12,6 +12,8 @@ const stages = [
 ];
 
 const stepButtons = [...document.querySelectorAll(".step")];
+const explainCards = [...document.querySelectorAll(".explain-card")];
+const diagramJumpButtons = [...document.querySelectorAll(".diagram-jump")];
 const gateElements = [...document.querySelectorAll(".flow-gate")];
 const flowArea = document.getElementById("flowArea");
 const flowCanvas = document.getElementById("flowCanvas");
@@ -211,6 +213,9 @@ function updateStage(index) {
     gate.classList.toggle("is-active", gateIndex === index);
     gate.classList.toggle("is-complete", gateIndex < index);
   });
+  explainCards.forEach((card, cardIndex) => {
+    card.classList.toggle("is-current", cardIndex === index);
+  });
 
   readout.classList.remove("is-changing");
   detail.classList.remove("is-changing");
@@ -246,6 +251,14 @@ function startAutoPlay() {
 stepButtons.forEach(button => button.addEventListener("click", () => {
   stopAutoPlay();
   updateStage(Number(button.dataset.stage));
+}));
+diagramJumpButtons.forEach(button => button.addEventListener("click", () => {
+  stopAutoPlay();
+  updateStage(Number(button.dataset.jumpStage));
+  document.getElementById("pipeline").scrollIntoView({
+    behavior: reducedMotion.matches ? "auto" : "smooth",
+    block: "start"
+  });
 }));
 nextButton.addEventListener("click", () => { stopAutoPlay(); updateStage((activeStage + 1) % stages.length); });
 playButton.addEventListener("click", () => isPlaying ? stopAutoPlay() : startAutoPlay());
