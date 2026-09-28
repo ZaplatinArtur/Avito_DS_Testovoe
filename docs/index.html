@@ -7,7 +7,7 @@
   <meta name="description" content="Интерактивная схема каскада поиска кандидатов для услуг Авито: от 189 тысяч объявлений до 50 результатов.">
   <title>Поиск кандидатов для услуг Авито — интерактивный каскад</title>
   <link rel="icon" href="avito-mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=stage-colors-2">
+  <link rel="stylesheet" href="style.css?v=approach-intro-1">
   <script defer src="app.js?v=stage-colors-2"></script>
 </head>
 <body>
@@ -33,7 +33,7 @@
         <h1 id="hero-title">Из <em>189 тысяч</em><br>объявлений —<br>к <em>50 кандидатам.</em></h1>
         <p class="hero-lead">Поиск устроен как каскад: сначала собираем широкий пул с высокой полнотой, затем последовательно уточняем соответствие запросу. Нажмите на этап, чтобы увидеть, как сужается выдача.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#pipeline">Смотреть каскад <span aria-hidden="true">↘</span></a>
+          <a class="button button-primary" href="#approach">Как устроено решение <span aria-hidden="true">↘</span></a>
           <a class="button button-secondary" href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe/blob/main/avito_reproduce_0850967_kaggle.ipynb">Открыть ноутбук <span aria-hidden="true">↗</span></a>
         </div>
       </div>
@@ -44,6 +44,29 @@
         <span class="metric-name">Recall@50</span>
         <p>Доля выбранных объявлений, найденных среди 50 кандидатов.</p>
       </aside>
+    </section>
+
+    <section id="approach" class="approach-section shell" aria-labelledby="approach-title">
+      <div class="approach-heading">
+        <div>
+          <span class="section-kicker">00 / Суть решения</span>
+          <h2 id="approach-title">Почему поиск идёт каскадом</h2>
+        </div>
+        <p>Человек вводит короткий запрос, иногда добавляет фильтры и локацию. Из 189 212 объявлений нужно вернуть не более 50 кандидатов — так, чтобы среди них оказались объявления, которые пользователь выбрал бы.</p>
+      </div>
+      <div class="approach-panel">
+        <div class="approach-principle">
+          <span class="approach-mark" aria-hidden="true">↳</span>
+          <p><strong>Главное — не потерять подходящее объявление рано.</strong> Если его нет в широком пуле, последующие модели уже не смогут его вернуть. Поэтому сначала ищем с запасом и лишь затем тратим больше вычислений на точное сравнение.</p>
+          <span class="approach-example"><span>«барбер»</span><i aria-hidden="true">→</i><span>«мужская стрижка»</span></span>
+        </div>
+        <div class="approach-path" aria-label="Три части каскада: собрать широкий пул, осторожно сузить его и выбрать 50 кандидатов">
+          <div><span class="approach-path-number">01</span><strong>Собрать</strong><p>BM25, география и смысловой поиск находят разные формулировки услуги.</p><small>≈ 9 000 кандидатов</small></div>
+          <div><span class="approach-path-number">02</span><strong>Сузить</strong><p>Два CatBoost оценивают текст, условия и признаки объявления, сохраняя запас.</p><small>1 500 → 750</small></div>
+          <div><span class="approach-path-number">03</span><strong>Выбрать</strong><p>LambdaMART и дообученный BGE внимательно сравнивают оставшиеся пары.</p><small>до 50 объявлений</small></div>
+        </div>
+        <p class="approach-metric">Качество измеряем <strong>Recall@50</strong>: долей выбранных пользователем объявлений, попавших в итоговые 50 кандидатов. Полное описание признаков и обучения — в <a href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe#идея-каскада">README</a>.</p>
+      </div>
     </section>
 
     <section id="pipeline" class="pipeline-section" aria-labelledby="pipeline-title">
