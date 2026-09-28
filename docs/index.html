@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c1221">
+  <meta name="description" content="Интерактивная схема каскада поиска кандидатов для услуг Авито: от 189 тысяч объявлений до 50 результатов.">
+  <title>Поиск кандидатов для услуг Авито — интерактивный каскад</title>
+  <link rel="icon" href="avito-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#pipeline">К каскаду</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="#top" aria-label="На начало страницы">
+        <img src="avito-mark.svg" width="37" height="37" alt="">
+        <span>AVITO<span class="brand-dot">/</span>SEARCH</span>
+      </a>
+      <nav aria-label="Навигация">
+        <a href="#pipeline">Каскад</a>
+        <a href="#results">Результаты</a>
+        <a class="nav-repo" href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe">Код <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="eyebrow-mark"></span> Кандидатогенерация · услуги</span>
+        <h1 id="hero-title">Из <em>189 тысяч</em><br>объявлений —<br>к <em>50 кандидатам.</em></h1>
+        <p class="hero-lead">Поиск устроен как каскад: сначала собираем широкий пул с высокой полнотой, затем последовательно уточняем соответствие запросу. Нажмите на этап, чтобы увидеть, как сужается выдача.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#pipeline">Смотреть каскад <span aria-hidden="true">↘</span></a>
+          <a class="button button-secondary" href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe/blob/main/avito_reproduce_0850967_kaggle.ipynb">Открыть ноутбук <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <aside class="hero-metric" aria-label="Результат на скрытой проверке">
+        <div class="metric-orbit" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <span class="metric-label">Скрытая проверка</span>
+        <strong>0,850967</strong>
+        <span class="metric-name">Recall@50</span>
+        <p>Доля выбранных объявлений, найденных среди 50 кандидатов.</p>
+      </aside>
+    </section>
+
+    <section id="pipeline" class="pipeline-section" aria-labelledby="pipeline-title">
+      <div class="shell">
+        <div class="section-heading">
+          <div><span class="section-kicker">01 / Как это работает</span><h2 id="pipeline-title">Пять шагов поиска</h2></div>
+          <p>Каждый переход уменьшает число пар «запрос — объявление». Ранние этапы сохраняют полноту; дорогая текстовая модель работает только с малым пулом.</p>
+        </div>
+
+        <div class="pipeline-card">
+          <div class="pipeline-topline">
+            <span class="live-indicator"><span></span> ИНТЕРАКТИВНАЯ СХЕМА</span>
+            <div class="pipeline-controls">
+              <button type="button" id="playButton" class="control-button" aria-label="Приостановить анимацию" aria-pressed="true">Ⅱ <span>Пауза</span></button>
+              <button type="button" id="nextButton" class="control-button" aria-label="Следующий этап">→ <span>Далее</span></button>
+            </div>
+          </div>
+
+          <div class="steps" role="group" aria-label="Этапы каскада">
+            <button class="step is-active" data-stage="0" type="button" aria-pressed="true"><span class="step-index">01</span><span class="step-count">189 212</span><span class="step-name">Корпус</span></button>
+            <button class="step" data-stage="1" type="button" aria-pressed="false"><span class="step-index">02</span><span class="step-count">≈ 9 000</span><span class="step-name">Широкий пул</span></button>
+            <button class="step" data-stage="2" type="button" aria-pressed="false"><span class="step-index">03</span><span class="step-count">1 500</span><span class="step-name">CatBoost L1</span></button>
+            <button class="step" data-stage="3" type="button" aria-pressed="false"><span class="step-index">04</span><span class="step-count">750</span><span class="step-name">CatBoost L2</span></button>
+            <button class="step" data-stage="4" type="button" aria-pressed="false"><span class="step-index">05</span><span class="step-count">50</span><span class="step-name">Финальный отбор</span></button>
+          </div>
+
+          <div class="flow-area" id="flowArea" aria-hidden="true"><div class="flow-grid"></div><div class="flow-glow"></div><div id="particles" class="particles"></div><div class="flow-core"><span id="coreCount">189 212</span><small id="coreLabel">объявлений</small></div></div>
+          <div class="flow-caption"><span>Визуализация условная: одна точка не равна одному объявлению.</span><span id="stageFraction">Весь корпус</span></div>
+
+          <div class="stage-detail" aria-live="polite">
+            <div class="detail-main"><span id="detailNumber" class="detail-number">ЭТАП 01 / 05</span><h3 id="detailTitle">Весь корпус объявлений</h3><p id="detailText">Отправная точка: 189 212 объявлений услуг. Сравнивать тяжёлой моделью каждый запрос со всем корпусом слишком дорого.</p></div>
+            <div class="detail-meta"><span>Методы этапа</span><strong id="detailMethods">Индекс объявлений</strong><span id="detailRecallLabel">Назначение</span><strong id="detailRecall">Полный охват корпуса</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="results-section shell" aria-labelledby="results-title">
+      <div class="section-heading"><div><span class="section-kicker">02 / Проверка</span><h2 id="results-title">Где теряются кандидаты</h2></div><p>Локальные значения получены на отложенной группе из 500 запросов. Скрытая проверка проводилась на другой группе, поэтому числа нельзя напрямую вычитать друг из друга.</p></div>
+      <div class="result-grid">
+        <article class="result-card"><span class="result-num">01</span><h3>Широкий пул</h3><strong>0,996</strong><span>Recall@pool · локально</span><div class="result-line" style="--fill:99.6%"></div></article>
+        <article class="result-card"><span class="result-num">02</span><h3>CatBoost L1</h3><strong>0,994</strong><span>Recall@1500 · локально</span><div class="result-line" style="--fill:99.4%"></div></article>
+        <article class="result-card"><span class="result-num">03</span><h3>CatBoost L2</h3><strong>0,986</strong><span>Recall@750 · локально</span><div class="result-line" style="--fill:98.6%"></div></article>
+        <article class="result-card result-card-accent"><span class="result-num">04</span><h3>Отправленное решение</h3><strong>0,850967</strong><span>Recall@50 · скрытая проверка</span><div class="result-line" style="--fill:85.0967%"></div></article>
+      </div>
+    </section>
+
+    <section class="closing-section shell"><div><span class="section-kicker">03 / Воспроизведение</span><h2>Весь код открыт.</h2><p>Ноутбук читает три Parquet-файла, обучает модели и создаёт <code>answer.csv</code>. Полный прогон на Kaggle с двумя GPU T4 занимает ориентировочно шесть часов.</p></div><a class="button button-primary" href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe">README и исходный код <span aria-hidden="true">↗</span></a></section>
+  </main>
+  <footer class="site-footer"><div class="shell"><span>Исследовательское решение задачи поиска услуг Авито</span><a href="https://github.com/ZaplatinArtur/Avito_DS_Testovoe">GitHub ↗</a></div></footer>
+</body>
+</html>

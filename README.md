@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="avito_reproduce_0850967_kaggle.ipynb"><strong>Открыть ноутбук</strong></a>
+  <a href="https://zaplatinartur.github.io/Avito_DS_Testovoe/"><strong>Посмотреть интерактивный каскад</strong></a>
+  · <a href="avito_reproduce_0850967_kaggle.ipynb"><strong>Открыть ноутбук</strong></a>
   · <a href="#идея-каскада">Каскад</a>
   · <a href="#проверка-качества">Результаты</a>
   · <a href="#воспроизведение">Запуск</a>
