@@ -1,4 +1,23 @@
-# Поиск объявлений услуг Авито: отправленная версия
+<p align="center">
+  <img src="assets/avito-logo.png" alt="Авито" width="440">
+</p>
+
+<h1 align="center">Поиск кандидатов для услуг Авито</h1>
+
+<p align="center">
+  Лексический и семантический поиск → два этапа CatBoost → LambdaMART + BGE reranker
+</p>
+
+<p align="center">
+  <a href="avito_reproduce_0850967_kaggle.ipynb"><strong>Открыть ноутбук</strong></a>
+  · <a href="#идея-каскада">Каскад</a>
+  · <a href="#проверка-качества">Результаты</a>
+  · <a href="#воспроизведение">Запуск</a>
+</p>
+
+| Скрытая проверка Recall@50 | Запросов | Объявлений в корпусе | Кандидатов на запрос |
+| :---: | :---: | :---: | :---: |
+| **0,850967** | 2 452 | 189 212 | 50 |
 
 ## Результат
 
@@ -7,15 +26,23 @@
 объявлений, попавших в список кандидатов, усреднённая по запросам.
 
 Отправленный `answer.csv` получил **Recall@50 = 0,850967** на проверяющей
-системе. Это версия `avito_full_lambda_crossencoder_answer_kaggle.ipynb`:
-BGE cross-encoder дообучался **три эпохи** с максимальной длиной пары
-**192 токена**.
+системе. В [ноутбуке](avito_reproduce_0850967_kaggle.ipynb) реализован
+каскад, использованный для отправки: BGE cross-encoder дообучался
+**три эпохи** с максимальной длиной пары **192 токена**.
 
 ## Идея каскада
 
 Тяжёлой моделью дорого оценивать каждый запрос со всеми 189 тысячами
 объявлений. Каскад сокращает число пар постепенно. Ранние стадии рассчитаны
 на полноту: пропущенное объявление следующий этап уже не восстановит.
+
+```mermaid
+flowchart LR
+    A["189 212 объявлений"] --> B["Широкий поиск<br/>около 9 000"]
+    B --> C["CatBoost L1<br/>1 500"]
+    C --> D["CatBoost L2<br/>750"]
+    D --> E["LambdaMART + BGE reranker<br/>50"]
+```
 
 | Этап | Размер на запрос | Назначение | Методы |
 | --- | ---: | --- | --- |
@@ -109,11 +136,14 @@ cross-encoder — запрос, заголовок, параметры и нач
 
 ## Воспроизведение
 
-Код этой версии находится в
-`avito_full_lambda_crossencoder_answer_kaggle.ipynb`. Нужны три Parquet-файла,
-Kaggle с двумя GPU T4 и доступ к весам `BAAI/bge-m3` и
-`BAAI/bge-reranker-v2-m3`. Ноутбук выполняется сверху вниз и создаёт
-`/kaggle/working/answer.csv`.
+1. Откройте [ноутбук](avito_reproduce_0850967_kaggle.ipynb) в Kaggle.
+2. Прикрепите набор с `train.parquet`, `benchmark_queries.parquet` и
+   `benchmark_items.parquet`.
+3. Включите **GPU T4 × 2** и доступ к весам `BAAI/bge-m3` и
+   `BAAI/bge-reranker-v2-m3` через Internet On либо прикреплённые модели.
+4. Запустите ячейки по порядку. Последняя ячейка создаст и проверит
+   `/kaggle/working/answer.csv`.
+
 Используются открытые библиотеки NumPy, pandas, PyArrow, SciPy, scikit-learn,
 CatBoost, XGBoost, PyTorch, Transformers, SentenceTransformers и PEFT.
 
